@@ -22,6 +22,7 @@ from ml.preprocessing import (
     build_preprocessor,
     clean_dataset,
     delay_class,
+    MILES_TO_KM,
 )
 from ml.weather import WEATHER_FEATURES
 
@@ -51,7 +52,7 @@ def load_and_prepare() -> pd.DataFrame:
     # CRSDepTime is local time as hhmm integer (e.g. 1735); 2400 means midnight.
     crs = pd.to_numeric(df["CRSDepTime"], errors="coerce").fillna(0).astype(int)
     result["dep_hour"] = (crs // 100) % 24
-    result["distance"] = pd.to_numeric(df["Distance"], errors="coerce")
+    result["distance"] = (pd.to_numeric(df["Distance"], errors="coerce") * MILES_TO_KM).round()
 
     result[TARGET] = delay_class(
         pd.to_numeric(df["ArrDelayMinutes"], errors="coerce").fillna(0),

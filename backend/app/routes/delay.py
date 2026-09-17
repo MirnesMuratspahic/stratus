@@ -13,7 +13,7 @@ class DelayRequest(BaseModel):
     month: int = Field(..., ge=1, le=12, description="Month of departure 1-12")
     day_of_week: int = Field(..., ge=1, le=7, description="Day of week 1=Monday .. 7=Sunday")
     dep_hour: int = Field(..., ge=0, le=23, description="Scheduled local departure hour 0-23")
-    distance: float = Field(..., ge=0, le=6000, description="Route distance in miles")
+    distance: float = Field(..., ge=0, le=10000, description="Route distance in km")
     temperature: float = Field(..., ge=-50, le=60, description="Temperature at origin in °C")
     precipitation: float = Field(..., ge=0, le=200, description="Precipitation at origin in mm/h")
     snowfall: float = Field(..., ge=0, le=100, description="Snowfall at origin in cm/h")

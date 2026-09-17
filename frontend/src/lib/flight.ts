@@ -40,13 +40,13 @@ export function getFieldStatus(
   }
 }
 
-// Great-circle distance between two airports in statute miles (what BTS reports).
+// Great-circle distance between two airports in kilometres.
 export function routeDistance(origin: string, dest: string): number {
   const a = AIRPORTS.find((x) => x.value === origin);
   const b = AIRPORTS.find((x) => x.value === dest);
   if (!a || !b || a === b) return 0;
   const toRad = (d: number) => (d * Math.PI) / 180;
-  const R = 3958.8; // Earth radius in miles
+  const R = 6371.0; // Earth radius in km
   const dLat = toRad(b.lat - a.lat);
   const dLon = toRad(b.lon - a.lon);
   const h =

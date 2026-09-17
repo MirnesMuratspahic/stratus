@@ -21,7 +21,7 @@ export function HelpPanel() {
         </div>
         <div>
           <span className="font-semibold text-slate-700">Udaljenost</span> -
-          Dužina rute u miljama. Popunjava se automatski iz odabranih aerodroma
+          Dužina rute u kilometrima. Popunjava se automatski iz odabranih aerodroma
         </div>
         <div>
           <span className="font-semibold text-slate-700">Temperatura</span> -

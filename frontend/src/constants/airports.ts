@@ -7,7 +7,7 @@ export interface Airport extends SelectOption {
 
 /** The 50 busiest US airports known to the trained XGBoost model.
  *  `value` is the IATA code expected by the model; lat/lon are used to
- *  pre-fill the route distance (great-circle, in miles). */
+ *  pre-fill the route distance (great-circle, in km). */
 export const AIRPORTS: Airport[] = [
   { value: "ATL", label: "ATL - Atlanta Hartsfield-Jackson", lat: 33.6407, lon: -84.4277 },
   { value: "DFW", label: "DFW - Dallas/Fort Worth", lat: 32.8998, lon: -97.0403 },

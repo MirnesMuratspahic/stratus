@@ -138,7 +138,7 @@ export function buildPrintHtml(
 </div>
 <div class="section-title">Ruta i vremenski uslovi na polaznom aerodromu</div>
 <div class="vitals">
-  ${row("Udaljenost", `${form.distance} mi`)}
+  ${row("Udaljenost", `${form.distance} km`)}
   ${row("Temperatura", `${form.temperature} °C`)}
   ${row("Padavine", `${form.precipitation} mm/h`)}
   ${row("Snijeg", `${form.snowfall} cm/h`)}

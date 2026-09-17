@@ -30,6 +30,9 @@ TARGET = "delay_class"
 ON_TIME_MAX = 15
 MINOR_DELAY_MAX = 60
 
+# BTS reports route distance in statute miles; the model works in kilometres.
+MILES_TO_KM = 1.609344
+
 DELAY_LABELS = {
     1: "Na vrijeme - Dolazak sa najviše 15 minuta kašnjenja",
     2: "Manje kašnjenje - Dolazak 15 do 60 minuta nakon rasporeda",

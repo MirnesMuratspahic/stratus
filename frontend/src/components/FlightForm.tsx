@@ -270,12 +270,12 @@ export function FlightForm() {
               )}
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                 <WeatherField
-                  label="Udaljenost (mi)"
+                  label="Udaljenost (km)"
                   name="distance"
                   value={form.distance}
                   onChange={handleChange}
                   min={0}
-                  max={6000}
+                  max={10000}
                   step={1}
                 />
                 <WeatherField
