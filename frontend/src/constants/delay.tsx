@@ -36,6 +36,6 @@ export const DELAY_CONFIG: Record<number, DelayCfg> = {
     text: "text-red-700",
     bar: "bg-red-500",
     icon: <XCircle className="h-5 w-5 text-red-600" />,
-    label: "Otkazan / preusmjeren",
+    label: "Otkazan",
   },
 };

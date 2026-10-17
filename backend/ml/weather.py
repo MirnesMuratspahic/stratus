@@ -2,7 +2,7 @@
 
 Two entry points:
   * fetch_archive()  - historical hourly weather (ERA5 reanalysis) used to
-                       enrich the BTS flight records before training.
+                       enrich the Avinor flight records before training.
   * fetch_forecast() - hourly forecast (up to 16 days ahead) used by the API
                        to pre-fill the weather fields for a planned flight.
 

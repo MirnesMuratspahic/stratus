@@ -1,4 +1,4 @@
-"""Trains the Stratus delay model on real BTS flight records enriched with
+"""Trains the Stratus delay model on real Avinor flight records enriched with
 Open-Meteo weather and saves the fitted sklearn Pipeline to delay_model.joblib.
 
     python -m ml.train_real              # real data (run ml.download_data first)
@@ -22,8 +22,8 @@ from ml.preprocessing import (
     build_preprocessor,
     clean_dataset,
     delay_class,
-    MILES_TO_KM,
 )
+from ml.airports import route_distance_km
 from ml.weather import WEATHER_FEATURES
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
@@ -32,39 +32,61 @@ WEATHER_CSV = os.path.join(DATA_DIR, "weather.csv")
 SYNTHETIC_CSV = os.path.join(DATA_DIR, "flights_synthetic.csv")
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "delay_model.joblib")
 
-# Cap on training rows to keep training time reasonable on a laptop. The full
-# year holds ~2.5M eligible flights; a stratified 1M sample is plenty.
+# Cap on training rows to keep training time reasonable on a laptop. The Avinor
+# dataset holds ~400k eligible flights, so by default all of them are used.
 MAX_ROWS = int(os.getenv("STRATUS_MAX_ROWS", "1000000"))
+
+# 90:10 split: compared with 50:50 .. 90:10 over 5 random splits each, more
+# training data gave a slightly higher ROC AUC and balanced accuracy, and 10 %
+# of the dataset (~40k flights) is still a large enough test set.
+TEST_SIZE = 0.1
+
+# All airports in the dataset are in Norway.
+LOCAL_TZ = "Europe/Oslo"
+
+# Arrival times further than this from the schedule are treated as data errors.
+MAX_EARLY_MINUTES = 120
+MAX_DELAY_MINUTES = 24 * 60
 
 
 def load_and_prepare() -> pd.DataFrame:
-    print("Loading real BTS flight dataset...")
-    df = pd.read_csv(FLIGHTS_CSV, low_memory=False)
+    print("Loading real Avinor flight dataset...")
+    df = pd.read_csv(FLIGHTS_CSV, parse_dates=["std", "sta", "ata"])
     print(f"  Raw rows: {len(df):,}")
 
-    result = pd.DataFrame(index=df.index)
-    # Map raw BTS column names to the feature names used by the model.
-    result["airline"] = df["Reporting_Airline"].astype(str)
-    result["origin"] = df["Origin"].astype(str)
-    result["dest"] = df["Dest"].astype(str)
-    result["month"] = pd.to_numeric(df["Month"], errors="coerce")
-    result["day_of_week"] = pd.to_numeric(df["DayOfWeek"], errors="coerce")
-    # CRSDepTime is local time as hhmm integer (e.g. 1735); 2400 means midnight.
-    crs = pd.to_numeric(df["CRSDepTime"], errors="coerce").fillna(0).astype(int)
-    result["dep_hour"] = (crs // 100) % 24
-    result["distance"] = (pd.to_numeric(df["Distance"], errors="coerce") * MILES_TO_KM).round()
+    # Avinor times are UTC; the model works with the local departure time.
+    local_std = df["std"].dt.tz_localize("UTC").dt.tz_convert(LOCAL_TZ).dt.tz_localize(None)
 
-    result[TARGET] = delay_class(
-        pd.to_numeric(df["ArrDelayMinutes"], errors="coerce").fillna(0),
-        pd.to_numeric(df["Cancelled"], errors="coerce").fillna(0),
-        pd.to_numeric(df["Diverted"], errors="coerce").fillna(0),
-    )
+    result = pd.DataFrame(index=df.index)
+    # Map raw Avinor column names to the feature names used by the model.
+    result["airline"] = df["airline"].astype(str)
+    result["origin"] = df["dep_airport"].astype(str)
+    result["dest"] = df["arr_airport"].astype(str)
+    result["month"] = local_std.dt.month
+    result["day_of_week"] = local_std.dt.dayofweek + 1
+    result["dep_hour"] = local_std.dt.hour
+    # Avinor has no distance column, so it is the great-circle route distance.
+    result["distance"] = [route_distance_km(o, d) for o, d in zip(result["origin"], result["dest"])]
+
+    cancelled = pd.to_numeric(df["cancelled"], errors="coerce").fillna(0)
+    arr_delay = (df["ata"] - df["sta"]).dt.total_seconds() / 60
+    result[TARGET] = delay_class(arr_delay.fillna(0), cancelled)
+
+    # Flown flights without an actual arrival time have an unknown outcome, and
+    # a handful of records have impossible arrival times (days off schedule).
+    flown = cancelled == 0
+    valid = ~flown | (arr_delay.notna() & arr_delay.between(-MAX_EARLY_MINUTES, MAX_DELAY_MINUTES))
+    print(f"  Dropped flights without a valid arrival time: {(~valid).sum():,}")
+    result = result[valid]
+    local_std = local_std[valid]
 
     # Join hourly weather at the origin airport for the scheduled departure hour.
     print("  Merging Open-Meteo weather at origin airport / departure hour...")
-    result["time"] = pd.to_datetime(df["FlightDate"]) + pd.to_timedelta(result["dep_hour"], unit="h")
+    result["time"] = local_std.dt.floor("h")
     weather = pd.read_csv(WEATHER_CSV, parse_dates=["time"])
     weather = weather.rename(columns={"airport": "origin"})
+    # Autumn DST change repeats one local hour; keep a single weather row for it.
+    weather = weather.drop_duplicates(subset=["origin", "time"])
     result = result.merge(weather, on=["origin", "time"], how="left")
     missing = result[WEATHER_FEATURES[0]].isna().mean() * 100
     print(f"  Rows without weather match: {missing:.2f}% (imputed with median)")
@@ -95,7 +117,7 @@ def train(synthetic: bool = False):
     y = df[TARGET] - 1
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
+        X, y, test_size=TEST_SIZE, random_state=42, stratify=y
     )
 
     # Flights are heavily imbalanced (~3/4 on time). Mild re-weighting of the
@@ -130,7 +152,7 @@ def train(synthetic: bool = False):
     print("\nClassification report:")
     print(classification_report(
         y_test, y_pred,
-        target_names=["Na vrijeme", "Manje kašnjenje", "Značajno kašnjenje", "Otkazan/preusmjeren"],
+        target_names=["Na vrijeme", "Manje kašnjenje", "Značajno kašnjenje", "Otkazan"],
     ))
 
     joblib.dump(model, MODEL_PATH)

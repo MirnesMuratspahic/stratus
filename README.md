@@ -1,14 +1,14 @@
 # Stratus - Flight Delay Prediction System
 
-> An intelligent decision-support tool for travellers, airline dispatchers and airport operations staff, powered by a machine learning model trained on real US flight records and historical weather data.
+> An intelligent decision-support tool for travellers, airline dispatchers and airport operations staff, powered by a machine learning model trained on real Norwegian (Avinor) flight records and historical weather data.
 
 ---
 
 ## About the Project
 
-**Stratus** is a web application that uses machine learning to estimate the risk of a flight arriving late before it departs. It predicts one of four **delay classes** - on time, minor delay, significant delay, or cancelled/diverted - based on the flight schedule and the weather at the origin airport at the scheduled departure hour.
+**Stratus** is a web application that uses machine learning to estimate the risk of a flight arriving late before it departs. It predicts one of four **delay classes** - on time, minor delay, significant delay, or cancelled - based on the flight schedule and the weather at the origin airport at the scheduled departure hour.
 
-The model was trained on **4.2 million real domestic flights** between the 50 busiest US airports in 2024 (source: US Department of Transportation, Bureau of Transportation Statistics *Airline On-Time Performance* database), enriched with **hourly historical weather** from the Open-Meteo ERA5 archive. It reaches an accuracy of **~75.7%** on held-out data, with the strongest signal for the on-time class; minority classes (delays and cancellations) are harder to separate from pre-departure data alone, which is why the app always shows the full probability distribution rather than a single verdict.
+The model was trained on **~401,000 real scheduled passenger flights** between 36 Norwegian airports from January 2018 to July 2025 (source: Avinor historical flight data with scheduled and actual departure/arrival times, released by Avinor for its remote-towers ML competition), enriched with **hourly historical weather** from the Open-Meteo ERA5 archive. Most of the flights are short regional routes operated by Widerøe in northern and western Norway, where wind and snow are frequent. It reaches an accuracy of **~83.3%** on held-out data (90:10 train/test split), with the strongest signal for the on-time class; minority classes (delays and cancellations) are harder to separate from pre-departure data alone, which is why the app always shows the full probability distribution rather than a single verdict.
 
 The project was developed as an academic project following the architecture of the **Priora** medical triage assistant.
 
@@ -16,7 +16,7 @@ The project was developed as an academic project following the architecture of t
 
 ## Purpose and Use
 
-Roughly one in five US domestic flights arrives more than 15 minutes late, and weather is the single largest cause of delay minutes. Travellers, dispatchers and ground operations staff have to decide early whether a connection is safe, whether extra crew or gates are needed, or whether a passenger should be rebooked - decisions that are easier with an objective risk estimate.
+Roughly one in seven flights in the training data arrives more than 15 minutes late or is cancelled, and on short regional routes weather is one of the main causes. Travellers, dispatchers and ground operations staff have to decide early whether a connection is safe, whether extra crew or gates are needed, or whether a passenger should be rebooked - decisions that are easier with an objective risk estimate.
 
 **Stratus** assists by:
 
@@ -45,10 +45,10 @@ Stratus is **not** a replacement for official airline information - it is a tool
 
 | Class | Label                    | Definition (arrival delay)              |
 | ----- | ------------------------ | --------------------------------------- |
-| 1     | On time                  | ≤ 15 minutes (FAA/BTS on-time standard) |
+| 1     | On time                  | ≤ 15 minutes (industry on-time standard) |
 | 2     | Minor delay              | 15 - 60 minutes                         |
 | 3     | Significant delay        | > 60 minutes                            |
-| 4     | Cancelled / diverted     | Flight cancelled or diverted            |
+| 4     | Cancelled                | Flight cancelled                        |
 
 ---
 
@@ -60,7 +60,7 @@ Stratus is **not** a replacement for official airline information - it is a tool
 cd backend
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python -m ml.download_data      # downloads BTS flights + Open-Meteo weather (~330 MB, 2024)
+python -m ml.download_data      # downloads Avinor flights (~53 MB, 2018-2025) + Open-Meteo weather
 python -m ml.train_real         # trains XGBoost and saves ml/delay_model.joblib
 python run.py                   # API on http://localhost:8000 (docs at /docs)
 ```

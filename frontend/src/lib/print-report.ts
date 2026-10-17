@@ -21,7 +21,7 @@ const DELAY_LABELS: Record<number, string> = {
   1: "Na vrijeme",
   2: "Manje kašnjenje",
   3: "Značajno kašnjenje",
-  4: "Otkazan / preusmjeren",
+  4: "Otkazan",
 };
 
 export function buildPrintHtml(

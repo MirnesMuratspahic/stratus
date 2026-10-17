@@ -55,7 +55,7 @@ export function routeDistance(origin: string, dest: string): number {
   return Math.round(2 * R * Math.asin(Math.sqrt(h)));
 }
 
-// Converts an ISO date string (YYYY-MM-DD) to the BTS month / day_of_week
+// Converts an ISO date string (YYYY-MM-DD) to the month / day_of_week
 // encoding used by the model (1 = Monday .. 7 = Sunday).
 export function dateParts(iso: string): { month: number; day_of_week: number } {
   const d = new Date(`${iso}T12:00:00`);

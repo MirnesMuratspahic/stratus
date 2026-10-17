@@ -5,11 +5,11 @@ export function HelpPanel() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5">
         <div>
           <span className="font-semibold text-slate-700">Aviokompanija</span> -
-          Kompanija koja operiše let (BTS kod, npr. DL = Delta)
+          Kompanija koja operiše let (IATA kod, npr. WF = Widerøe)
         </div>
         <div>
           <span className="font-semibold text-slate-700">Polazni / dolazni aerodrom</span>{" "}
-          - IATA kod jednog od 50 najprometnijih aerodroma u SAD
+          - IATA kod jednog od 36 norveških aerodroma iz Avinor skupa podataka
         </div>
         <div>
           <span className="font-semibold text-slate-700">Datum leta</span> - Iz

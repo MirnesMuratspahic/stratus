@@ -25,19 +25,16 @@ CATEGORICAL_FEATURES = [
 
 TARGET = "delay_class"
 
-# Delay class thresholds (arrival delay in minutes). Class 1 follows the FAA /
-# BTS definition of an on-time flight (arrives less than 15 minutes late).
+# Delay class thresholds (arrival delay in minutes). Class 1 follows the
+# standard industry definition of an on-time flight (arrives at most 15 minutes late).
 ON_TIME_MAX = 15
 MINOR_DELAY_MAX = 60
-
-# BTS reports route distance in statute miles; the model works in kilometres.
-MILES_TO_KM = 1.609344
 
 DELAY_LABELS = {
     1: "Na vrijeme - Dolazak sa najviše 15 minuta kašnjenja",
     2: "Manje kašnjenje - Dolazak 15 do 60 minuta nakon rasporeda",
     3: "Značajno kašnjenje - Dolazak više od 60 minuta nakon rasporeda",
-    4: "Otkazan ili preusmjeren - Let vjerovatno neće biti realizovan po planu",
+    4: "Otkazan - Let vjerovatno neće biti realizovan po planu",
 }
 
 DELAY_COLORS = {
@@ -65,13 +62,13 @@ def build_preprocessor() -> ColumnTransformer:
     ])
 
 
-def delay_class(arr_delay_minutes: pd.Series, cancelled: pd.Series, diverted: pd.Series) -> pd.Series:
-    # Cancelled / diverted flights have no arrival delay, so they are mapped
-    # to their own class before the minute thresholds are applied.
+def delay_class(arr_delay_minutes: pd.Series, cancelled: pd.Series) -> pd.Series:
+    # Cancelled flights have no arrival delay, so they are mapped to their own
+    # class before the minute thresholds are applied.
     cls = pd.Series(1, index=arr_delay_minutes.index, dtype="int64")
     cls[arr_delay_minutes > ON_TIME_MAX] = 2
     cls[arr_delay_minutes > MINOR_DELAY_MAX] = 3
-    cls[(cancelled == 1) | (diverted == 1)] = 4
+    cls[cancelled == 1] = 4
     return cls
 
 

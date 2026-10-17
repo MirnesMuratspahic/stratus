@@ -1,5 +1,5 @@
 """Generates a synthetic flights dataset for local development when the real
-BTS / Open-Meteo download is not available (offline demo, CI, quick smoke test).
+Avinor / Open-Meteo download is not available (offline demo, CI, quick smoke test).
 
 The output has the same columns as the frame produced by train_real.load_and_prepare()
 so the rest of the pipeline works unchanged. Run with: python -m ml.generate_data
@@ -29,7 +29,7 @@ FEATURES = {
         "month":         (6.5, 3.4, 1, 12),
         "day_of_week":   (4.0, 2.0, 1, 7),
         "dep_hour":      (12, 4.5, 5, 22),
-        "distance":      (1290, 885, 160, 4350),
+        "distance":      (430, 300, 40, 1500),
         "temperature":   (17, 10, -20, 42),
         "precipitation": (0.1, 0.4, 0, 8),
         "snowfall":      (0.0, 0.05, 0, 3),
@@ -40,7 +40,7 @@ FEATURES = {
         "month":         (6.8, 3.3, 1, 12),
         "day_of_week":   (4.1, 2.0, 1, 7),
         "dep_hour":      (15, 4.0, 5, 23),
-        "distance":      (1370, 900, 160, 4350),
+        "distance":      (460, 310, 40, 1500),
         "temperature":   (18, 10, -20, 42),
         "precipitation": (0.4, 1.0, 0, 15),
         "snowfall":      (0.05, 0.2, 0, 5),
@@ -51,7 +51,7 @@ FEATURES = {
         "month":         (7.0, 3.0, 1, 12),
         "day_of_week":   (4.2, 2.0, 1, 7),
         "dep_hour":      (17, 3.5, 5, 23),
-        "distance":      (1450, 935, 160, 4350),
+        "distance":      (490, 320, 40, 1500),
         "temperature":   (19, 11, -20, 42),
         "precipitation": (1.2, 2.2, 0, 25),
         "snowfall":      (0.15, 0.5, 0, 8),
@@ -62,7 +62,7 @@ FEATURES = {
         "month":         (5.5, 4.0, 1, 12),
         "day_of_week":   (4.0, 2.0, 1, 7),
         "dep_hour":      (13, 5.0, 5, 23),
-        "distance":      (1125, 805, 160, 4350),
+        "distance":      (380, 280, 40, 1500),
         "temperature":   (8, 13, -25, 40),
         "precipitation": (2.5, 3.5, 0, 40),
         "snowfall":      (0.8, 1.5, 0, 15),

@@ -60,7 +60,7 @@ RECOMMENDATIONS = {
     1: "NA VRIJEME: Let bi trebao stići prema rasporedu. Standardni dolazak na aerodrom (2 sata prije polaska) je dovoljan.",
     2: "MANJE KAŠNJENJE: Moguće kašnjenje od 15 do 60 minuta. Provjerite status leta prije polaska na aerodrom i izbjegavajte kratka presjedanja (< 60 min).",
     3: "ZNAČAJNO KAŠNJENJE: Visok rizik kašnjenja preko sat vremena. Planirajte presjedanje od najmanje 2 sata i pratite obavještenja aviokompanije.",
-    4: "RIZIK OTKAZIVANJA: Uslovi ukazuju na moguće otkazivanje ili preusmjeravanje. Razmotrite alternativni let i provjerite pravila aviokompanije o preknjižavanju.",
+    4: "RIZIK OTKAZIVANJA: Uslovi ukazuju na moguće otkazivanje. Razmotrite alternativni let i provjerite pravila aviokompanije o preknjižavanju.",
 }
 
 

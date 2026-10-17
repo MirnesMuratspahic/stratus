@@ -187,7 +187,7 @@ export function FlightForm() {
                 </label>
                 <Input
                   type="text"
-                  placeholder="npr. DL 1234 (opcionalno)"
+                  placeholder="npr. WF 149 (opcionalno)"
                   value={flightNumber}
                   onChange={(e) => setFlightNumber(e.target.value)}
                 />

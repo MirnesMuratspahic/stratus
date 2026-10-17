@@ -7,9 +7,9 @@ router = APIRouter()
 
 
 class DelayRequest(BaseModel):
-    airline: str = Field(..., min_length=2, max_length=3, description="BTS airline code, e.g. DL")
-    origin: str = Field(..., min_length=3, max_length=3, description="Origin airport IATA code, e.g. ATL")
-    dest: str = Field(..., min_length=3, max_length=3, description="Destination airport IATA code, e.g. LAX")
+    airline: str = Field(..., min_length=2, max_length=3, description="IATA airline code, e.g. WF")
+    origin: str = Field(..., min_length=3, max_length=3, description="Origin airport IATA code, e.g. OSL")
+    dest: str = Field(..., min_length=3, max_length=3, description="Destination airport IATA code, e.g. BOO")
     month: int = Field(..., ge=1, le=12, description="Month of departure 1-12")
     day_of_week: int = Field(..., ge=1, le=7, description="Day of week 1=Monday .. 7=Sunday")
     dep_hour: int = Field(..., ge=0, le=23, description="Scheduled local departure hour 0-23")
